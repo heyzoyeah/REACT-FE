@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
-
 import * as actions from "../../store/actions";
 import "./login.scss";
+import { handleLoginAPI } from "../../services/userService";
 import { FormattedMessage } from "react-intl";
 
 class Login extends Component {
@@ -22,9 +22,14 @@ class Login extends Component {
     this.setState({ password: event.target.value });
   };
 
-  handleSubmitLogin = () => {
-    console.log("data login -->", this.state);
+  handleSubmitLogin = async () => {
+    try {
+      await handleLoginAPI(this.state.username, this.state.password);
+    } catch (e) {
+      console.log(e);
+    }
   };
+
   render() {
     let { username, password } = this.state;
     return (
