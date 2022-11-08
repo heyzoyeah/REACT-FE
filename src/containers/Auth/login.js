@@ -12,6 +12,7 @@ class Login extends Component {
     this.state = {
       username: "",
       password: "",
+      errMessage: "",
     };
   }
 
@@ -23,10 +24,34 @@ class Login extends Component {
   };
 
   handleSubmitLogin = async () => {
+    //reset status
+    this.setState({
+      errMessage: "",
+    });
     try {
-      await handleLoginAPI(this.state.username, this.state.password);
+      let dataValidate = await handleLoginAPI(
+        this.state.username,
+        this.state.password
+      );
+      if (dataValidate && dataValidate.errCode !== 0) {
+        this.setState({
+          errMessage: dataValidate.messenger,
+        });
+      }
+      if (dataValidate && dataValidate.errCode === 0) {
+        console.log(dataValidate.user);
+        console.log("login done");
+        this.props.userLoginSuccess(dataValidate.user);
+      }
     } catch (e) {
-      console.log(e);
+      if (e.response) {
+        if (e.response.data) {
+          this.setState({
+            errMessage: e.response.data.messenger,
+          });
+        }
+      }
+      console.log(e.response);
     }
   };
 
@@ -56,7 +81,9 @@ class Login extends Component {
               />
               <span className="spin"></span>
             </div>
-
+            <div className="warning-color" style={{ color: "red" }}>
+              {this.state.errMessage}
+            </div>
             <div className="button login">
               <button
                 onClick={() => {
@@ -86,9 +113,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     navigate: (path) => dispatch(push(path)),
-    adminLoginSuccess: (adminInfo) =>
-      dispatch(actions.adminLoginSuccess(adminInfo)),
-    adminLoginFail: () => dispatch(actions.adminLoginFail()),
+    userLoginSuccess: (userInfo) =>
+      dispatch(actions.userLoginSuccess(userInfo)),
+    userLoginFail: () => dispatch(actions.userLoginFail()),
   };
 };
 
