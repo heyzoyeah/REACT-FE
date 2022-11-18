@@ -3,6 +3,8 @@ import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { handleGetUser } from "../../services/userService";
 import "../System/UserManage.scss";
+
+import ModalCreateUser from "./modalCreateUser";
 class UserManage extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +29,11 @@ class UserManage extends Component {
     return (
       <div className="text-center">
         <h1>User</h1>
+        <div>
+          <button>+ create User</button>
+
+          <ModalCreateUser></ModalCreateUser>
+        </div>
         <table id="customers">
           <tr>
             <th>id</th>
